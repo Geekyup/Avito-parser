@@ -79,22 +79,6 @@ python -m avito_parser.gui
 
 7. После завершения нажмите **"Открыть результат"** для просмотра Excel-файла
 
-### Через Python код
-
-```python
-from avito_parser import run_scraping
-
-count, path = run_scraping(
-    start_url="https://www.avito.ru/moskva/kvartiry/prodam",
-    max_pages=5,
-    output_file="results.xlsx",
-    cookies_file="cookies.txt"  # опционально
-)
-
-print(f"Собрано объявлений: {count}")
-print(f"Файл сохранён: {path}")
-```
-
 ## Формат данных
 
 Каждое объявление содержит следующую информацию:
@@ -140,10 +124,3 @@ DELAY_MAX = 6.0    # Максимальная пауза между запрос
 - **"Ошибка запроса: 403 Forbidden"**
   - Решение: Добавьте cookies, используйте VPN
 
-## Лицензия
-
-MIT License
-
-## Автор
-
-Avito Parser Tool
