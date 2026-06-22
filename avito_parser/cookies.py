@@ -2,11 +2,11 @@ import os
 import http.cookiejar
 from typing import Optional
 
-import requests
+from curl_cffi import requests as curl_requests
 
 
-def load_cookies(session: requests.Session, cookies_file: Optional[str]) -> int:
-    """Загружает куки из файла Netscape-формата в сессию requests.
+def load_cookies(session: curl_requests.Session, cookies_file: Optional[str]) -> int:
+    """Загружает куки из файла Netscape-формата в сессию curl_cffi.
     
     Возвращает количество загруженных куки (0, если файл не указан/не найден).
     """
@@ -15,5 +15,8 @@ def load_cookies(session: requests.Session, cookies_file: Optional[str]) -> int:
 
     jar = http.cookiejar.MozillaCookieJar(cookies_file)
     jar.load(ignore_discard=True, ignore_expires=True)
-    session.cookies.update(jar)
+
+    for cookie in jar:
+        session.cookies.set(cookie.name, cookie.value, domain=cookie.domain)
+
     return len(jar)

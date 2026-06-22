@@ -4,7 +4,7 @@ import logging
 import os
 from typing import Callable, Optional
 
-import requests
+from curl_cffi import requests
 from bs4 import BeautifulSoup
 
 from avito_parser.models import Item
@@ -16,22 +16,7 @@ from avito_parser.xlsx_writer import save_to_xlsx
 DELAY_MIN = 3.0
 DELAY_MAX = 6.0
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/136.0.0.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Cache-Control": "no-cache",
-    "Pragma": "no-cache",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-    "Upgrade-Insecure-Requests": "1",
-}
+IMPERSONATE = "chrome124"  
 
 
 logging.basicConfig(
@@ -84,8 +69,7 @@ def run_scraping(
         if log_callback:
             log_callback(msg)
 
-    session = requests.Session()
-    session.headers.update(HEADERS)
+    session = requests.Session(impersonate=IMPERSONATE)
 
     n_cookies = load_cookies(session, cookies_file)
     if n_cookies:
@@ -109,7 +93,7 @@ def run_scraping(
         try:
             resp = session.get(url, timeout=30)
             resp.raise_for_status()
-        except requests.RequestException as e:
+        except requests.errors.RequestsError as e:
             emit(f"Ошибка запроса: {e}")
             break
 
